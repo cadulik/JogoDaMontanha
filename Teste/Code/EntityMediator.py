@@ -1,8 +1,11 @@
+from platform import android_ver
+
 from Code.Const import WIN_WIDHT
 from Code.EnemyShot import EnemyShot
 from Code.PlayerShot import PlayerShot
 from Code.enemy import Enemy
 from Code.entity import Entity
+from Code.player import Player
 
 
 class EntityMediator:
@@ -11,19 +14,40 @@ class EntityMediator:
         if isinstance(ent, Enemy):
             if ent.rect.right <= 0:
                 ent.health = 0
-        if isinstance(ent,PlayerShot):
+        if isinstance(ent, PlayerShot):
             if ent.rect.left >= WIN_WIDHT:
-                ent.health= 0
+                ent.health = 0
         if isinstance(ent, EnemyShot):
             if ent.rect.right <= 0:
                 ent.health = 0
         pass
 
     @staticmethod
-    def verify_collision(entity_list:list[Entity]):
+    def __verify_colission_entity(ent1, ent2):
+        valid_interaction = False
+        if isinstance(ent1, Enemy) and isinstance(ent2, PlayerShot):
+            valid_interaction = True
+        elif isinstance(ent1, PlayerShot) and isinstance(ent2, Enemy):
+            valid_interaction = True
+        elif isinstance(ent1, Player) and isinstance(ent2, EnemyShot):
+            valid_interaction = True
+        elif isinstance(ent1, EnemyShot) and isinstance(ent2, Player):
+            valid_interaction = True
+
+        if valid_interaction:  # if valid_interaction == True:
+            if (ent1.rect.right > ent2.rect.left and
+                ent1.rect.left <= ent2.rect.right and
+                ent1.rect.bottom >= ent2.rect.top and
+                ent1.rect.top >= ent2.rect.bottom):
+
+    @staticmethod
+    def verify_collision(entity_list: list[Entity]):
         for i in range(len(entity_list)):
-            test_entity = entity_list[i]
-            EntityMediator.__verify_colission_window(test_entity)
+            entity1 = entity_list[i]
+            EntityMediator.__verify_colission_window(entity1)
+            for j in range(i + 1, len(entity_list)):
+                entity2 = entity_list[j]
+                EntityMediator.__verify_colission_entity(entity1, entity2)
 
     @staticmethod
     def verify_health(entity_list: list[Entity]):
