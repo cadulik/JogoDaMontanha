@@ -9,7 +9,8 @@ import pygame.display
 from pygame import Surface, Rect
 from pygame.font import Font
 
-from Code.Const import C_WHITE, WIN_HEIGHT, MENU_OPTION, EVENT_ENEMY, SPAWN_TIME, C_GREEN, C_CYAN
+from Code.Const import C_WHITE, WIN_HEIGHT, MENU_OPTION, EVENT_ENEMY, SPAWN_TIME, C_GREEN, C_CYAN, EVENT_TIMEOUT, \
+    TIMEOUT_STEP, TIMEOUT_LEVEL
 from Code.EntityMediator import EntityMediator
 from Code.enemy import Enemy
 from Code.entity import Entity
@@ -19,18 +20,17 @@ from Code.player import Player
 
 class Level:
     def __init__(self,window,name,game_mode):
-        self.timeout = 20000
+        self.timeout = TIMEOUT_LEVEL
         self.window = window
         self.name = name
         self.game_mode = game_mode
         self.entity_list: list[Entity] = []
-        self.entity_list.extend(EntityFactory.get_entity('Level1Bg'))
+        self.entity_list.extend(EntityFactory.get_entity(self.name + 'Bg'))
         self.entity_list.append(EntityFactory.get_entity('Player1'))
         if game_mode in [ MENU_OPTION[1] , MENU_OPTION[2]]:
             self.entity_list.append(EntityFactory.get_entity('Player2'))
         pygame.time.set_timer(EVENT_ENEMY, SPAWN_TIME )
-
-
+        pygame.time.set_timer(EVENT_TIMEOUT, TIMEOUT_STEP) #100ms
 
     def run(self):
         pygame.mixer_music.load(f'./asset/{self.name}.mp3')
@@ -57,6 +57,11 @@ class Level:
                 if event.type == EVENT_ENEMY:
                     choice = random.choice(('Enemy1', 'Enemy2'))
                     self.entity_list.append(EntityFactory.get_entity(choice))
+                if event.type == EVENT_TIMEOUT:
+                    self.timeout -= TIMEOUT_STEP
+                    if self.timeout == 0:
+                        return True
+
 
 
         #printed text
@@ -67,7 +72,7 @@ class Level:
             #Collisions
             EntityMediator.verify_collision(entity_list=self.entity_list)
             EntityMediator.verify_health(entity_list=self.entity_list)
-    pass
+
 
 
 
