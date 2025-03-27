@@ -29,9 +29,9 @@ ENTITY_DAMAGE = {
     'Player2' : 1,
     'Player2Shot' : 20,
     'Enemy1': 1,
-    'Enemy1Shot' : 20,
+    'Enemy1Shot' : 100,
     'Enemy2': 1,
-    'Enemy2Shot' : 15,
+    'Enemy2Shot' : 100,
 
 }
 
@@ -138,7 +138,7 @@ SPAWN_TIME = 4000
 
 #T
 TIMEOUT_STEP = 100 #100ms
-TIMEOUT_LEVEL = 10000 #20s
+TIMEOUT_LEVEL = 20000 #20s
 
 
 #W
